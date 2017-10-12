@@ -1,0 +1,6 @@
+[package]
+name = "random_start"
+version = "0.1.0"
+authors = ["therunomask <markusnoeth@gmx.de>"]
+
+[dependencies]
