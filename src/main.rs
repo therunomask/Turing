@@ -63,13 +63,13 @@ fn vecto(mut zahl: i64) -> Vec<i64> {
 }
 
 fn logic(v :Vec<i64>) ->Vec<i64>{
-    let out: Vec<i64> = v;
-    if (v[0]==1|v[1]==1) {
+    let mut out: Vec<i64> = v.clone();
+    if (v[0]==1)|(v[1]==1) {
         out.push(1);
     } else{
         out.push(0);
     }
-     if (v[0]==1|v[2]==1) {
+     if (v[0]==1)|(v[2]==1) {
         out.push(1);
     } else{
         out.push(0);
