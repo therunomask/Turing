@@ -4,6 +4,7 @@
 //fn matrix_vector_mult()
 
 fn main() {
+    
     println!("Hello, world!");
     print!("gehts?");
     vecto(120);
@@ -18,8 +19,11 @@ fn main() {
         ],
     };
     //mat.print();
-    let inpu: Vec<f32> = vec![1.0, 2.0, 3.0, 5.0];
-    println!("{:?}", Mat6::matpro(mat, inpu))
+    let inpu: Vec<i64> = vec![1, 1, 0, 1];
+    println!("{:?}", Mat6::matpro(mat,Vi64ToVf32( logic( inpu)) ));
+
+
+
 }
 
 struct Mat6 {
@@ -63,6 +67,9 @@ fn vecto(mut zahl: i64) -> Vec<i64> {
 }
 
 fn logic(v :Vec<i64>) ->Vec<i64>{
+    if v.len()!=4 {
+        panic!("The Vector should have length 4!");
+    }
     let mut out: Vec<i64> = v.clone();
     if (v[0]==1)|(v[1]==1) {
         out.push(1);
@@ -78,6 +85,13 @@ fn logic(v :Vec<i64>) ->Vec<i64>{
     out
 }
 
+fn Vi64ToVf32 (v : Vec<i64>)->Vec<f32>{
+    let mut out=vec![];
+    for k in v {
+        out.push(k as f32);
+    }
+    out
+}
 
 fn dot(u1: Vec<f64>,u2:Vec<f64>) -> f64 {
     let out: f64=u1.iter().zip(u2.iter()).map(|(a, b)| a * b).fold(0.0,|a,b| a+b);
