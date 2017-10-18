@@ -20,7 +20,7 @@ fn main() {
     };
     //mat.print();
     let inpu: Vec<i64> = vec![1, 1, 0, 1];
-    println!("{:?}", Mat6::matpro(mat,Vi64ToVf32( logic( inpu)) ));
+    println!("{:?}", Mat6::matpro(mat,vi64_to_vf32( logic( inpu)) ));
 
 
 
@@ -85,7 +85,7 @@ fn logic(v :Vec<i64>) ->Vec<i64>{
     out
 }
 
-fn Vi64ToVf32 (v : Vec<i64>)->Vec<f32>{
+fn vi64_to_vf32 (v : Vec<i64>)->Vec<f32>{
     let mut out=vec![];
     for k in v {
         out.push(k as f32);
