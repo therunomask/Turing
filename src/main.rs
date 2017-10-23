@@ -19,7 +19,7 @@ fn main() {
     let inpu: Vec<bool> = vec![true, false, true, false];
     println!("{:?}", Mat6::matpro(mat, vbool_to_vf32(logic(inpu))));
     let mut testband = Band::new(40);
-    println!("{}", testband.get_value())
+    println!("{}", testband.get_value());
     testband.mover(true);
     testband.overwrite(true);
     testband.print_band();
@@ -131,18 +131,18 @@ fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
     out
 }
 
-fn organiser(mut state_vector:Vec<bool>,mat:Mat6,mut band:Band)->(bool,Vec<bool>){
-    let mut state_vector_float=vbool_to_vf32(state_vector);
-    let mut new_state=Mat6::matpro(mat,state_vector_float);
-    let mut direction:bool;
-    let mut new_state_bool:Vec<bool>;
-    (direction,new_state_bool)=after_matrix_cast(new_state);
-    let mut terminated=band.mover(direction);
-    if not terminated{
-        println("{:?}",new_state_bool);
+fn organiser(mut state_vector: Vec<bool>, mat: Mat6, mut band: Band) -> (bool, Vec<bool>) {
+    let mut state_vector_float = vbool_to_vf32(state_vector);
+    let mut new_state = Mat6::matpro(mat, state_vector_float);
+    let mut direction: bool;
+    let mut new_state_bool: Vec<bool>;
+    let (direction, new_state_bool) = after_matrix_cast(new_state);
+    let mut terminated = band.mover(direction);
+    if terminated == false {
+        println("{:?}", new_state_bool);
     }
-    let vec=vec![band.get_value,new_state_bool[:]];
-    (terminated,logic(vec))
+    let vec = vec![band.get_value,new_state_bool[:]];
+    (terminated, logic(vec))
 
 }
 
