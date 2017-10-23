@@ -4,10 +4,7 @@
 //fn matrix_vector_mult()
 
 fn main() {
-    
-    println!("Hello, world!");
-    print!("gehts?");
-    vecto(1200);
+    //vecto(1200);
     let mat = Mat6 {
         dat: [
             [0., 1., 1., 1., 0., 2.],
@@ -19,18 +16,13 @@ fn main() {
         ],
     };
     //mat.print();
-<<<<<<< HEAD
-    let inpu: Vec<i64> = vec![1, 1, 0, 1];
-    println!("{:?}", Mat6::matpro(mat,vi64_to_vf32( logic( inpu)) ));
-
-
-
-=======
-    let inpu: Vec<f32> = vec![1.0, 2.0, 3.0, 5.0, 1.0, 2.0];
-    println!("{:?}", Mat6::matpro(mat, inpu));
+    //let inpu: Vec<f32> = vec![1.0, 2.0, 3.0, 5.0, 1.0, 2.0];
+    //println!("{:?}", Mat6::matpro(mat, inpu));
     let mut testband = Band::new(40);
-    println!("{}", testband.get_value())
->>>>>>> chris
+    println!("{}", testband.get_value());
+    testband.mover(true);
+    testband.overwrite(true);
+    testband.print_band();
 }
 
 struct Mat6 {
@@ -73,14 +65,7 @@ fn vecto(mut zahl: i64) -> Vec<bool> {
     ve
 }
 
-<<<<<<< HEAD
-fn logic(v :Vec<i64>) ->Vec<i64>{
-    if v.len()!=4 {
-        panic!("The Vector should have length 4!");
-    }
-=======
 fn logic(v: Vec<i64>) -> Vec<i64> {
->>>>>>> chris
     let mut out: Vec<i64> = v.clone();
     if (v[0] == 1) | (v[1] == 1) {
         out.push(1);
@@ -96,8 +81,8 @@ fn logic(v: Vec<i64>) -> Vec<i64> {
     out
 }
 
-fn vi64_to_vf32 (v : Vec<i64>)->Vec<f32>{
-    let mut out=vec![];
+fn vi64_to_vf32(v: Vec<i64>) -> Vec<f32> {
+    let mut out = vec![];
     for k in v {
         out.push(k as f32);
     }
@@ -112,6 +97,20 @@ fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
     out
 }
 
+fn organiser(mut state_vector:Vec<bool>,mat:Mat6,mut band:Band)->(bool,Vec<bool>){
+    let mut state_vector_float=vbool_to_vf32(state_vector);
+    let mut new_state=Mat6::matpro(mat,state_vector_float);
+    let mut direction:bool;
+    let mut new_state_bool:Vec<bool>;
+    (direction,new_state_bool)=after_matrix_cast(new_state);
+    let mut terminated=band.mover(direction);
+    if not terminated{
+        println("{:?}",new_state_bool);
+    }
+    let vec=vec![band.get_value,new_state_bool[:]];
+    (terminated,logic(vec))
+
+}
 
 struct Band {
     band: Vec<bool>,
@@ -119,10 +118,10 @@ struct Band {
 }
 
 impl Band {
-    pub fn get_value(self) -> bool {
+    pub fn get_value(&self) -> bool {
         self.band[self.position]
     }
-    pub fn mover(mut self, direction: bool) -> bool {
+    pub fn mover(&mut self, direction: bool) -> bool {
         if direction {
             self.position += 1;
         } else {
@@ -134,7 +133,7 @@ impl Band {
             true
         }
     }
-    pub fn overwrite(mut self, new_value: bool) {
+    pub fn overwrite(&mut self, new_value: bool) {
         self.band[self.position] = new_value;
     }
     pub fn new(number: i64) -> Band {
@@ -142,5 +141,8 @@ impl Band {
             band: vecto(number),
             position: 0,
         }
+    }
+    pub fn print_band(&self) {
+        println!("{:?}", self.band);
     }
 }
