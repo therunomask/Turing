@@ -17,14 +17,23 @@ fn main() {
     };
     //mat.print();
     let inpu: Vec<bool> = vec![true, false, true, false];
-    println!("{:?}", Mat6::matpro(mat, vbool_to_vf32(logic(inpu))));
+    println!("{:?}", Mat6::matpro(&mat, vbool_to_vf32(logic(inpu))));
     let mut testband = Band::new(40);
     println!("{}", testband.get_value());
     testband.mover(true);
     testband.overwrite(true);
     testband.print_band();
-    let mut state_vector: Vec<bool>=vec![true ,true, false, false, true, true];
-    organiser(state_vector,mat,testband)
+    let mut state_vector: Vec<bool> = vec![true, true, false, false, true, true];
+    let mut terminated = false;
+    let mut a = true;
+    let mut b = false;
+    let (a, b) = test();
+    while terminated == false {
+        let (terminated, state_vector) = organiser(state_vector, mat, testband);
+    }
+}
+fn test() -> (bool, bool) {
+    (true, true)
 }
 
 struct Mat6 {
@@ -40,7 +49,7 @@ impl Mat6 {
             print!("\n");
         }
     }
-    pub fn matpro(a: Mat6, b: Vec<f32>) -> Vec<f32> {
+    pub fn matpro(a: &Mat6, b: Vec<f32>) -> Vec<f32> {
         let mut out: Vec<f32> = vec![0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
         for i in 0..6 {
             for j in 0..6 {
@@ -95,7 +104,6 @@ fn vbool_to_vf32(v: Vec<bool>) -> Vec<f32> {
         } else {
             out.push(0.0);
         }
-
     }
     out
 }
@@ -126,26 +134,30 @@ fn after_matrix_cast(v: Vec<f32>) -> (bool, Vec<bool>) {
 
 
 fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
-    let out: f64 = u1.iter().zip(u2.iter()).map(|(a, b)| a * b).fold(
-        0.0,
-        |a, b| a + b,
-    );
+    let out: f64 = u1.iter()
+        .zip(u2.iter())
+        .map(|(a, b)| a * b)
+        .fold(0.0, |a, b| a + b);
     out
 }
 
 fn organiser(mut state_vector: Vec<bool>, mat: Mat6, mut band: Band) -> (bool, Vec<bool>) {
     let mut state_vector_float = vbool_to_vf32(state_vector);
-    let mut new_state = Mat6::matpro(mat, state_vector_float);
+    let mut new_state = Mat6::matpro(&mat, state_vector_float);
     let mut direction: bool;
     let mut new_state_bool: Vec<bool>;
     let (direction, new_state_bool) = after_matrix_cast(new_state);
     let mut terminated = band.mover(direction);
     if terminated == false {
-        println("{:?}", new_state_bool);
+        println!("{:?}", new_state_bool);
     }
-    let vec = vec![band.get_value,new_state_bool[:]];
+    let vec = vec![
+        band.get_value(),
+        new_state_bool[0],
+        new_state_bool[1],
+        new_state_bool[2],
+    ];
     (terminated, logic(vec))
-
 }
 
 struct Band {
