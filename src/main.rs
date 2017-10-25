@@ -23,6 +23,8 @@ fn main() {
     testband.mover(true);
     testband.overwrite(true);
     testband.print_band();
+    let mut state_vector: Vec<bool>=vec![true ,true, false, false, true, true];
+    organiser(state_vector,mat,testband)
 }
 
 struct Mat6 {
