@@ -16,8 +16,8 @@ fn main() {
         ],
     };
     //mat.print();
-    //let inpu: Vec<f32> = vec![1.0, 2.0, 3.0, 5.0, 1.0, 2.0];
-    //println!("{:?}", Mat6::matpro(mat, inpu));
+    let inpu: Vec<bool> = vec![true, false, true, false];
+    println!("{:?}", Mat6::matpro(mat, vbool_to_vf32(logic(inpu))));
     let mut testband = Band::new(40);
     println!("{}", testband.get_value());
     testband.mover(true);
@@ -67,50 +67,84 @@ fn vecto(mut zahl: i64) -> Vec<bool> {
     ve
 }
 
-fn logic(v: Vec<i64>) -> Vec<i64> {
-    let mut out: Vec<i64> = v.clone();
-    if (v[0] == 1) | (v[1] == 1) {
-        out.push(1);
-    } else {
-        out.push(0);
+fn logic(v: Vec<bool>) -> Vec<bool> {
+    if v.len() != 4 {
+        panic!("The Vector should have length 4!");
     }
-    if (v[0] == 1) | (v[2] == 1) {
-        out.push(1);
+    let mut out: Vec<bool> = v.clone();
+    if (v[0] == true) | (v[1] == true) {
+        out.push(true);
     } else {
-        out.push(0);
+        out.push(false);
+    }
+    if (v[0] == true) | (v[2] == true) {
+        out.push(true);
+    } else {
+        out.push(false);
     }
 
     out
 }
 
-fn vi64_to_vf32(v: Vec<i64>) -> Vec<f32> {
+
+fn vbool_to_vf32(v: Vec<bool>) -> Vec<f32> {
     let mut out = vec![];
     for k in v {
-        out.push(k as f32);
+        if k == true {
+            out.push(1.0);
+        } else {
+            out.push(0.0);
+        }
+
     }
     out
 }
+
+fn after_matrix_cast(v: Vec<f32>) -> (bool, Vec<bool>) {
+    let mut right: bool;
+    if v[0] > 0.5 {
+        right = true;
+    } else {
+        right = false;
+    }
+    let mut out = vec![false, false, false];
+    if v[1] >= v[2] {
+        if v[1] >= v[3] {
+            out[0] = true;
+        } else {
+            out[2] = true;
+        }
+    } else {
+        if v[2] >= v[3] {
+            out[1] = true;
+        } else {
+            out[2] = true;
+        }
+    }
+    (right, out)
+}
+
 
 fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
-    let out: f64 = u1.iter()
-        .zip(u2.iter())
-        .map(|(a, b)| a * b)
-        .fold(0.0, |a, b| a + b);
+    let out: f64 = u1.iter().zip(u2.iter()).map(|(a, b)| a * b).fold(
+        0.0,
+        |a, b| a + b,
+    );
     out
 }
 
-fn organiser(mut state_vector:Vec<bool>,mat:Mat6,mut band:Band)->(bool,Vec<bool>){
-    let mut state_vector_float=vbool_to_vf32(state_vector);
-    let mut new_state=Mat6::matpro(mat,state_vector_float);
-    let mut direction:bool;
-    let mut new_state_bool:Vec<bool>;
-    (direction,new_state_bool)=after_matrix_cast(new_state);
-    let mut terminated=band.mover(direction);
-    if not terminated{
-        println("{:?}",new_state_bool);
+fn organiser(mut state_vector: Vec<bool>, mat: Mat6, mut band: Band) -> (bool, Vec<bool>) {
+    let mut state_vector_float = vbool_to_vf32(state_vector);
+    let mut new_state = Mat6::matpro(mat, state_vector_float);
+    let mut direction: bool;
+    let mut new_state_bool: Vec<bool>;
+    let (direction, new_state_bool) = after_matrix_cast(new_state);
+    let mut terminated = band.mover(direction);
+    if terminated == false {
+        println("{:?}", new_state_bool);
     }
-    let vec=vec![band.get_value,new_state_bool[:]];
-    (terminated,logic(vec))
+    let vec = vec![band.get_value,new_state_bool[:]];
+    (terminated, logic(vec))
 
 }
 
