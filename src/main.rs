@@ -17,7 +17,7 @@ fn main() {
     };
     //mat.print();
     let inpu: Vec<bool> = vec![true, false, true, false];
-    println!("{:?}", Mat6::matpro(&mat, vbool_to_vf32(logic(inpu))));
+    println!("{:?}", Mat6::matpro(&mat, vbool_to_vf32(&logic(inpu))));
     let mut testband = Band::new(40);
     println!("{}", testband.get_value());
     testband.mover(true);
@@ -25,16 +25,11 @@ fn main() {
     testband.print_band();
     let mut state_vector: Vec<bool> = vec![true, true, false, false, true, true];
     let mut terminated = false;
-    let mut a = true;
-    let mut b = false;
-    let (a, b) = test();
     while terminated == false {
-        let (terminated, state_vector) = organiser(state_vector, mat, testband);
+        let (terminated, state_vector) = organiser(&state_vector, &mat, &testband);
     }
 }
-fn test() -> (bool, bool) {
-    (true, true)
-}
+
 
 struct Mat6 {
     dat: [[f32; 6]; 6],
@@ -96,10 +91,10 @@ fn logic(v: Vec<bool>) -> Vec<bool> {
 }
 
 
-fn vbool_to_vf32(v: Vec<bool>) -> Vec<f32> {
+fn vbool_to_vf32(v: &Vec<bool>) -> Vec<f32> {
     let mut out = vec![];
     for k in v {
-        if k == true {
+        if k == &true {
             out.push(1.0);
         } else {
             out.push(0.0);
@@ -141,8 +136,8 @@ fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
     out
 }
 
-fn organiser(mut state_vector: Vec<bool>, mat: Mat6, mut band: Band) -> (bool, Vec<bool>) {
-    let mut state_vector_float = vbool_to_vf32(state_vector);
+fn organiser(mut state_vector: &Vec<bool>, mat: &Mat6, mut band: &Band) -> (bool, Vec<bool>) {
+    let mut state_vector_float = vbool_to_vf32(&state_vector);
     let mut new_state = Mat6::matpro(&mat, state_vector_float);
     let mut direction: bool;
     let mut new_state_bool: Vec<bool>;
