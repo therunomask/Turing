@@ -26,7 +26,7 @@ fn main() {
     let mut state_vector: Vec<bool> = vec![true, true, false, false, true, true];
     let mut terminated = false;
     while terminated == false {
-        let (terminated, state_vector) = organiser(&state_vector, &mat, &testband);
+        let (terminated, state_vector) = organiser(&state_vector, &mat, &mut testband);
     }
 }
 
@@ -129,25 +129,29 @@ fn after_matrix_cast(v: Vec<f32>) -> (bool, Vec<bool>) {
 
 
 fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
-    let out: f64 = u1.iter()
-        .zip(u2.iter())
-        .map(|(a, b)| a * b)
-        .fold(0.0, |a, b| a + b);
+    let out: f64 = u1.iter().zip(u2.iter()).map(|(a, b)| a * b).fold(
+        0.0,
+        |a, b| a + b,
+    );
     out
 }
 
-fn organiser(mut state_vector: &Vec<bool>, mat: &Mat6, mut band: &Band) -> (bool, Vec<bool>) {
+fn organiser(
+    mut state_vector: &Vec<bool>,
+    mat: &Mat6,
+    mut testband: &mut Band,
+) -> (bool, Vec<bool>) {
     let mut state_vector_float = vbool_to_vf32(&state_vector);
     let mut new_state = Mat6::matpro(&mat, state_vector_float);
     let mut direction: bool;
     let mut new_state_bool: Vec<bool>;
     let (direction, new_state_bool) = after_matrix_cast(new_state);
-    let mut terminated = band.mover(direction);
+    let mut terminated = testband.mover(direction);
     if terminated == false {
         println!("{:?}", new_state_bool);
     }
     let vec = vec![
-        band.get_value(),
+        testband.get_value(),
         new_state_bool[0],
         new_state_bool[1],
         new_state_bool[2],
