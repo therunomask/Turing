@@ -20,13 +20,23 @@ fn main() {
     println!("{:?}", Mat6::matpro(&mat, vbool_to_vf32(&logic(inpu))));
     let mut testband = Band::new(40);
     println!("{}", testband.get_value());
-    testband.mover(true);
+    //testband.mover(true);
     testband.overwrite(true);
     testband.print_band();
     let mut state_vector: Vec<bool> = vec![true, true, false, false, true, true];
     let mut terminated = false;
+    let mut a = false;
+    while a == false {
+        print!("a");
+        a = true
+    }
     while terminated == false {
-        let (terminated, state_vector) = organiser(&state_vector, &mat, &mut testband);
+        println!("{}", terminated);
+        println!("this happens");
+        let (terminatedbla, state_vectorbla) = organiser(&state_vector, &mat, &mut testband);
+        state_vector = state_vectorbla;
+        terminated = terminatedbla;
+        println!("{}", terminated);
     }
 }
 
@@ -129,10 +139,10 @@ fn after_matrix_cast(v: Vec<f32>) -> (bool, Vec<bool>) {
 
 
 fn dot(u1: Vec<f64>, u2: Vec<f64>) -> f64 {
-    let out: f64 = u1.iter().zip(u2.iter()).map(|(a, b)| a * b).fold(
-        0.0,
-        |a, b| a + b,
-    );
+    let out: f64 = u1.iter()
+        .zip(u2.iter())
+        .map(|(a, b)| a * b)
+        .fold(0.0, |a, b| a + b);
     out
 }
 
@@ -169,12 +179,13 @@ impl Band {
         self.band[self.position]
     }
     pub fn mover(&mut self, direction: bool) -> bool {
+        println!("{}", self.position);
         if direction {
             self.position += 1;
         } else {
             self.position -= 1;
         }
-        if self.position > self.band.len() {
+        if self.position < self.band.len() {
             false
         } else {
             true
