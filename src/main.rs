@@ -18,7 +18,7 @@ fn main() {
     //mat.print();
     let inpu: Vec<bool> = vec![true, false, true, false];
     println!("{:?}", Mat6::matpro(&mat, vbool_to_vf32(&logic(inpu))));
-    let mut testband = Band::new(40);
+    let mut testband = Band::new(4);
     println!("{}", testband.get_value());
     //testband.mover(true);
     testband.overwrite(true);
@@ -36,7 +36,7 @@ fn main() {
         let (terminatedbla, state_vectorbla) = organiser(&state_vector, &mat, &mut testband);
         state_vector = state_vectorbla;
         terminated = terminatedbla;
-        println!("{}", terminated);
+        println!("{:?}", state_vector);
     }
 }
 
@@ -185,7 +185,7 @@ impl Band {
         } else {
             self.position -= 1;
         }
-        if self.position < self.band.len() {
+        if self.position < self.band.len() - 1 {
             false
         } else {
             true
