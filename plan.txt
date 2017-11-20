@@ -1,4 +1,4 @@
-chemisches gedächtnis für synapsen
+chemisches gedï¿½chtnis fï¿½r synapsen
 hebsches lernen 
 globales dopamin
 
@@ -8,6 +8,21 @@ gradientenaufstieg
 
 verschiedene startmatrizen
 
-reducktion großer matrizen auf kleine die functionserhaltend sind
+reducktion groï¿½er matrizen auf kleine die functionserhaltend sind
 
 integration des bandes in die matrix
+
+
+konkreter Programmierplan:
+
+1. Bewerter: vergleicht Endergebnis mit Endaktivierung des Zustandsvektors
+
+2. Streiche Nullzeilen in der Mustermatrix
+
+3. Aktualisierungsmatriz entsteht aus Verbindungsmatrix elementweise multipliziert
+    mit Zustandsvektor -0.5.
+4. Addiere Aktualisierungsmatriz auf Aenderungsmatrix mit Updatefaktor. 
+    vielleicht brauchen wir ein aenderungsminimum, um Vorzeichenwechsel 
+    zu ermoeglichen
+
+
