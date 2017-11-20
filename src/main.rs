@@ -10,8 +10,6 @@ fn main() {
             [0., 0., 1., 0., 1., -1.],
             [2., 2., 1., 1., -2., -1.],
             [-2., -1., -1., 0., 1., 2.],
-            [0., 0., 0., 0., 0., 0.],
-            [0., 0., 0., 0., 0., 0.],
         ],
     };
     let mut testband = Band::new(12738);
@@ -28,13 +26,13 @@ fn main() {
 
 
 struct Mat6 {
-    dat: [[f32; 6]; 6],
+    dat: [[f32; 6]; 4],
 }
 
 impl Mat6 {
     pub fn print(self) {
         for i in 0..6 {
-            for j in 0..6 {
+            for j in 0..4 {
                 print!("{} ", self.dat[i][j]);
             }
             print!("\n");
@@ -42,7 +40,7 @@ impl Mat6 {
     }
     pub fn matpro(a: &Mat6, b: Vec<f32>) -> Vec<f32> {
         let mut out: Vec<f32> = vec![0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-        for i in 0..6 {
+        for i in 0..4 {
             for j in 0..6 {
                 out[i] += a.dat[i][j] * b[j];
             }
