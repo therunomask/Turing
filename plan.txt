@@ -1,0 +1,13 @@
+chemisches gedächtnis für synapsen
+hebsches lernen 
+globales dopamin
+
+dopamin lokal machen
+
+gradientenaufstieg
+
+verschiedene startmatrizen
+
+reducktion großer matrizen auf kleine die functionserhaltend sind
+
+integration des bandes in die matrix
