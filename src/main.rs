@@ -5,11 +5,16 @@
 
 fn main() {
     let mat = Mat6 {
-        dat: [[0., 1., 1., 1., 0., 0.], [0., 0., 1., 0., 1., -1.], [2., 2., 1.,
-  1., -2., -1.], [-2., -1., -1., 0., 1., 2.], [0., 0., 0., 0., 0.,
-  0.], [0., 0., 0., 0., 0., 0.]],
+        dat: [
+            [0., 1., 1., 1., 0., 0.],
+            [0., 0., 1., 0., 1., -1.],
+            [2., 2., 1., 1., -2., -1.],
+            [-2., -1., -1., 0., 1., 2.],
+            [0., 0., 0., 0., 0., 0.],
+            [0., 0., 0., 0., 0., 0.],
+        ],
     };
-    let mut testband = Band::new(300);
+    let mut testband = Band::new(12738);
     print!("The Band is: ");
     testband.print_band();
     let mut state_vector: Vec<bool> = vec![true, true, false, false, true, true];
@@ -139,18 +144,17 @@ fn organiser(
     if terminated == true {
         print!("The final states are: ");
         println!("{:?}", new_state_bool);
-        new_state_return= new_state_bool;
-    }
-    else{
+        new_state_return = new_state_bool;
+    } else {
         let vec = vec![
-        testband.get_value(),
-        new_state_bool[0],
-        new_state_bool[1],
-        new_state_bool[2],
-    ];
-    new_state_return=logic(vec);
+            testband.get_value(),
+            new_state_bool[0],
+            new_state_bool[1],
+            new_state_bool[2],
+        ];
+        new_state_return = logic(vec);
     }
-  
+
     (terminated, new_state_return)
 }
 
