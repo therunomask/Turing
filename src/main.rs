@@ -12,8 +12,10 @@ fn main() {
             [-2., -1., -1., 0., 1., 2.],
         ],
     };
-    mat = onerun(10, mat);
+    mat = onerun(5, mat);
     mat.print();
+
+
     /*let mut testband = Band::new(667);
     print!("The Band is: ");
     testband.print_band();
@@ -25,6 +27,7 @@ fn main() {
         terminated = terminatedbla;
     }*/
 }
+
 
 
 
@@ -49,14 +52,22 @@ impl Mat66 {
             ],
         }
     }
-    pub fn vec_to_mat(uvec: &Vec<bool>) -> Mat66 {
+    pub fn vec_to_mat(vec: &Vec<f32>, vec2: &Vec<f32>) -> Mat66 {
         let mut out = Mat66::new();
         for i in 0..6 {
             for j in 0..6 {
-                out.dat[i][j] = ((uvec[i] & uvec[j]) as i32) as f32;
+                out.dat[i][j] = vec[i] * vec2[j];
             }
         }
         out
+    }
+    pub fn print(&self) {
+        for i in 0..6 {
+            for j in 0..6 {
+                print!("{} ", self.dat[i][j]);
+            }
+            print!("\n");
+        }
     }
 }
 
@@ -73,7 +84,7 @@ impl Mat64 {
             ],
         }
     }
-    pub fn print(self) {
+    pub fn print(&self) {
         for i in 0..4 {
             for j in 0..6 {
                 print!("{} ", self.dat[i][j]);
@@ -105,11 +116,38 @@ impl Mat64 {
         let mut out = Mat64::new();
         for i in 0..4 {
             for p in 0..6 {
-                if self.dat[i][p] > 0.5 {
+                if self.dat[i][p] > 0.0 {
                     out.dat[i][p] = 1.0;
                 } else {
                     out.dat[i][p] = 0.0;
                 }
+            }
+        }
+        out
+    }
+    pub fn vec_to_mat(vec: &Vec<f32>, vec2: &Vec<f32>) -> Mat64 {
+        let mut out = Mat64::new();
+        for i in 0..4 {
+            for j in 0..6 {
+                out.dat[i][j] = vec[i] * vec2[j];
+            }
+        }
+        out
+    }
+    pub fn minus(mat1: &Mat64, mat2: &Mat64) -> Mat64 {
+        let mut out = Mat64::new();
+        for i in 0..4 {
+            for p in 0..6 {
+                out.dat[i][p] = mat1.dat[i][p] - mat2.dat[i][p];
+            }
+        }
+        out
+    }
+    pub fn plus(mat1: &Mat64, mat2: &Mat64) -> Mat64 {
+        let mut out = Mat64::new();
+        for i in 0..4 {
+            for p in 0..6 {
+                out.dat[i][p] = mat1.dat[i][p] + mat2.dat[i][p];
             }
         }
         out
@@ -135,6 +173,19 @@ impl ops::Sub<Mat64> for Mat64 {
     fn sub(self, right: Mat64) -> Mat64 {
         let mut out = Mat64::new();
         for i in 0..4 {
+            for p in 0..6 {
+                out.dat[i][p] = self.dat[i][p] - right.dat[i][p];
+            }
+        }
+        out
+    }
+}
+
+impl ops::Sub<Mat66> for Mat66 {
+    type Output = Mat66;
+    fn sub(self, right: Mat66) -> Mat66 {
+        let mut out = Mat66::new();
+        for i in 0..6 {
             for p in 0..6 {
                 out.dat[i][p] = self.dat[i][p] - right.dat[i][p];
             }
@@ -226,7 +277,7 @@ fn after_matrix_cast(v: Vec<f32>) -> (bool, Vec<bool>) {
 
 fn success(zahl: i64, result: Vec<bool>) -> bool {
     let mut index = 0;
-    for state in 0..result.len() - 1 {
+    for state in 0..result.len() {
         if result[state] {
             index = state;
         }
@@ -286,7 +337,11 @@ impl Band {
         if direction {
             self.position += 1;
         } else {
-            self.position -= 1;
+            if self.position == 0 {
+                self.position = self.band.len();
+            } else {
+                self.position -= 1;
+            }
         }
         if self.position < self.band.len() {
             false
@@ -308,31 +363,60 @@ impl Band {
     }
 }
 
+fn boolvec_to_f32(uvec: &Vec<bool>) -> Vec<f32> {
+    let mut out = vec![];
+    for i in uvec {
+        out.push((*i as i32) as f32);
+    }
+    out
+}
+
 fn onerun(number: i64, mat: Mat64) -> Mat64 {
-    let mut update = Mat64::new();
+    let mut return_mat = Mat64::new();
+    let mut update_success = Mat64::new();
+    let mut update_fail = Mat64::new();
     let mut testband = Band::new(number);
     let mut state_vector: Vec<bool> = vec![true, true, false, false, true, true];
     let mut terminated = false;
     let mut n = 0.;
+    let mut toolong = false;
     while terminated == false {
+        println!("{}", n);
         n += 1.;
-        let U = Mat66::vec_to_mat(&state_vector);
+        let U = Mat66::vec_to_mat(
+            &boolvec_to_f32(&state_vector),
+            &boolvec_to_f32(&state_vector),
+        );
         let mu = mat.mult_on_u(&U);
-        let theta = mu.heavy();
-        update = update - mu + theta;
+        let theta = Mat64::minus(
+            &mu,
+            &Mat64::vec_to_mat(&vec![0.5, 0.5, 0.5, 0.5], &boolvec_to_f32(&state_vector)),
+        ).heavy();
+        update_success = Mat64::plus(&Mat64::minus(&update_success, &mu), &theta);
+        update_fail = update_fail - mu +
+            Mat64::vec_to_mat(&vec![1.0, 1.0, 1.0, 1.0], &boolvec_to_f32(&state_vector)) -
+            theta;
         let (terminatedbla, state_vectorbla) = organiser(&state_vector, &mat, &mut testband);
         state_vector = state_vectorbla;
         terminated = terminatedbla;
         if n > 10.0 * (testband.band.len() as f32) {
             terminated = true;
+            toolong = true;
         }
     }
-    let suc = success(
+    println!("{:?}", state_vector);
+    let mut suc = success(
         number,
-        vec![state_vector[1], state_vector[2], state_vector[3]],
+        vec![state_vector[0], state_vector[1], state_vector[2]],
     );
-    if !suc {
-        update = update * (-1.0);
+    println!("{}", suc);
+    if toolong {
+        suc = false;
     }
-    mat + update * (1. / (n + 1.))
+    if !suc {
+        return_mat = mat + update_fail * (0.5 / n);
+    } else {
+        return_mat = mat + update_success * (0.5 / n);
+    }
+    return_mat
 }
